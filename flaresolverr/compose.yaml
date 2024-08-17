@@ -1,0 +1,19 @@
+---
+networks:
+  backend:
+    external: true
+
+services:
+  flaresolverr:
+    image: lscr.io/linuxserver/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Africa/Johannesburg
+      - FLARESOLVERR__PORT=8191
+      - FLARESOLVERR__LOGLEVEL=info
+    networks:
+      - backend
+    restart: unless-stopped
+    
