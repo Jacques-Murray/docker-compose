@@ -1,0 +1,33 @@
+---
+volumes:
+  doplarr-config:
+    driver: local
+
+networks:
+  frontend:
+    external: true
+
+services:
+  doplarr:
+    image: lscr.io/linuxserver/doplarr:latest
+    container_name: doplarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Africa/Johannesburg
+      - DISCORD__TOKEN=${DISCORD_TOKEN}
+      - OVERSEERR__API=${OVERSEERR_API}
+      - OVERSEERR__URL=${OVERSEERR_URL}
+      - RADARR__API=${RADARR_API}
+      - RADARR__URL=${RADARR_URL}
+      - SONARR__API=${SONARR_API}
+      - SONARR__URL=${SONARR_URL}
+      - SONARR__QUALITY_PROFILE=${SONARR_QUALITY_PROFILE}
+      - SONARR__ROOT_FOLDER=${SONARR_ROOT_FOLDER}
+      - RADARR__QUALITY_PROFILE=${RADARR_QUALITY_PROFILE}
+      - RADARR__ROOT_FOLDER=${RADARR_ROOT_FOLDER}
+    volumes:
+      - doplarr-config:/config:rw
+    networks:
+      - frontend
+    restart: unless-stopped
