@@ -1,0 +1,25 @@
+---
+services:
+  monitoring:
+    image: nicolargo/glances:latest-full
+    container_name: glances
+    restart: unless-stopped
+    pid: host
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/os-release:/etc/os-release:ro
+      - /:/rootfs:ro
+      - ./config/glances.conf:/etc/glances/glances.conf
+    environment:
+      - "GLANCES_OPT=-w"
+      - PUID=1000
+      - PGID=1000
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
