@@ -1,0 +1,54 @@
+---
+services:
+  freshrss:
+    image: freshrss/freshrss:latest
+    container_name: freshrss
+    hostname: freshrss
+    restart: unless-stopped
+    networks:
+      - frontend
+      - freshrss-network
+    logging:
+      options:
+        max-size: 10m
+    volumes:
+      - ./data:/var/www/FreshRSS/data:rw
+      - ./extensions:/var/www/FreshRSS/extensions:rw
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Africa/Johannesburg
+      CRON_MIN: "3,33"
+      TRUSTED_PROXY: 172.16.0.1/12 192.168.0.1/16 172.18.0.1/12
+
+  freshrss-db:
+    image: postgres:16
+    container_name: freshrss-db
+    hostname: freshrss-db
+    restart: unless-stopped
+    networks:
+      - freshrss-network
+    logging:
+      options:
+        max-size: 10m
+    volumes:
+      - ./db:/var/lib/postgresql/data:rw
+    environment:
+      PUID: 1000
+      PGID: 1000
+      POSTGRES_DB: ${DB_BASE:-freshrss}
+      POSTGRES_USER: ${DB_USER:-freshrss}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-freshrss}
+    command:
+      # Examples of PostgreSQL tuning.
+      # https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server
+      # When in doubt, skip and stick to default PostgreSQL settings.
+      - -c
+      - shared_buffers=1GB
+      - -c
+      - work_mem=32MB
+
+networks:
+  frontend:
+    external: true
+  freshrss-network:
